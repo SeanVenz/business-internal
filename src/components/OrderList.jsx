@@ -51,7 +51,12 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
       <div className="p-8 text-center text-gray-500">
         <div className="text-4xl mb-4">📋</div>
         <p className="text-lg">No orders found</p>
-        <p className="text-sm">Add your first order to get started</p>
+        <p className="text-sm">
+          {products.length === 0 
+            ? "Add some products first, then create your first order" 
+            : "Add your first order to get started"
+          }
+        </p>
       </div>
     );
   }
