@@ -70,21 +70,21 @@ const ProductForm = ({ product, onSubmit, onCancel }) => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Product Image *
         </label>
-        <div className="flex items-center space-x-4">
-          <div className="flex-shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+          <div className="flex-shrink-0 mx-auto sm:mx-0">
             {imagePreview ? (
               <img
                 src={imagePreview}
                 alt="Product preview"
-                className="h-20 w-20 object-cover rounded-md border border-gray-300"
+                className="h-24 w-24 sm:h-20 sm:w-20 object-cover rounded-md border border-gray-300"
               />
             ) : (
-              <div className="h-20 w-20 bg-gray-200 rounded-md flex items-center justify-center">
+              <div className="h-24 w-24 sm:h-20 sm:w-20 bg-gray-200 rounded-md flex items-center justify-center">
                 <span className="text-gray-400 text-xs">No image</span>
               </div>
             )}
           </div>
-          {/* <div>
+          {/* <div className="text-center sm:text-left">
             <input
               type="file"
               ref={fileInputRef}
@@ -96,7 +96,7 @@ const ProductForm = ({ product, onSubmit, onCancel }) => {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="w-full sm:w-auto bg-white border border-gray-300 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               {imagePreview ? 'Change Image' : 'Upload Image'}
             </button>
@@ -177,18 +177,18 @@ const ProductForm = ({ product, onSubmit, onCancel }) => {
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-end space-x-3">
+      <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium"
+          className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium order-2 sm:order-1"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 font-medium"
+          className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 font-medium order-1 sm:order-2"
         >
           {loading ? 'Saving...' : (product ? 'Update Product' : 'Add Product')}
         </button>

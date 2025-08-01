@@ -100,9 +100,9 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       {/* Customer Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label htmlFor="customerName" className="block text-sm font-medium text-gray-700 mb-2">
             Customer Name *
@@ -182,7 +182,8 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
             onClick={addOrderItem}
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium"
           >
-            Add Item
+            <span className="hidden sm:inline">Add Item</span>
+            <span className="sm:hidden">Add</span>
           </button>
         </div>
 
@@ -194,16 +195,16 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
         ) : (
           <div className="space-y-4">
             {orderedItems.map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-md p-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="md:col-span-2">
+              <div key={index} className="border border-gray-200 rounded-md p-3 sm:p-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Product
                     </label>
                     <select
                       value={item.productId}
                       onChange={(e) => updateOrderItem(index, 'productId', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                       required
                     >
                       <option value="">Select a product</option>
@@ -215,36 +216,38 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity
-                    </label>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => updateOrderItem(index, 'quantity', parseInt(e.target.value) || 0)}
-                      min="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      required
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Quantity
+                      </label>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => updateOrderItem(index, 'quantity', parseInt(e.target.value) || 0)}
+                        min="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={() => removeOrderItem(index)}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex items-end">
-                    <button
-                      type="button"
-                      onClick={() => removeOrderItem(index)}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                  {item.productId && (
+                    <div className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded">
+                      Subtotal: {formatPrice(item.price * item.quantity)}
+                    </div>
+                  )}
                 </div>
-
-                {item.productId && (
-                  <div className="mt-2 text-sm text-gray-600">
-                    Subtotal: {formatPrice(item.price * item.quantity)}
-                  </div>
-                )}
               </div>
             ))}
 
@@ -277,18 +280,18 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-end space-x-3">
+      <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium"
+          className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium order-2 sm:order-1"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 font-medium"
+          className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 font-medium order-1 sm:order-2"
         >
           {loading ? 'Saving...' : (order ? 'Update Order' : 'Create Order')}
         </button>

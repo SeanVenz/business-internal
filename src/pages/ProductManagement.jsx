@@ -86,16 +86,17 @@ const ProductManagement = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Product Management</h1>
         <button
           onClick={() => setShowForm(true)}
           disabled={showForm}
-          className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
         >
-          Add New Product
+          <span className="sm:hidden">Add Product</span>
+          <span className="hidden sm:inline">Add New Product</span>
         </button>
       </div>
 
@@ -108,8 +109,8 @@ const ProductManagement = () => {
 
       {/* Product Form */}
       {showForm && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
             {editingProduct ? 'Edit Product' : 'Add New Product'}
           </h2>
           <ProductForm
@@ -122,8 +123,8 @@ const ProductManagement = () => {
 
       {/* Products List */}
       <div className="bg-white rounded-lg shadow-md">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold">Products ({products.length})</h2>
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <h2 className="text-lg sm:text-xl font-semibold">Products ({products.length})</h2>
         </div>
         <ProductList
           products={products}

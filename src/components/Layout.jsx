@@ -4,8 +4,8 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/admin/products', label: 'Product Management', icon: '🍪' },
-    { path: '/admin/orders', label: 'Order Management', icon: '📋' }
+    { path: '/admin/products', label: 'Product Management', icon: '🍪', shortLabel: 'Products' },
+    { path: '/admin/orders', label: 'Order Management', icon: '📋', shortLabel: 'Orders' }
   ];
 
   return (
@@ -15,12 +15,14 @@ const Layout = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">
-                🧁 Pastry Business Manager
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
+                <span className="hidden sm:inline">🧁 Pastry Business Manager</span>
+                <span className="sm:hidden">🧁 Pastry Mgr</span>
               </h1>
             </div>
-            <div className="text-sm text-gray-500">
-              Internal Management System
+            <div className="text-xs sm:text-sm text-gray-500">
+              <span className="hidden sm:inline">Internal Management System</span>
+              <span className="sm:hidden">Internal</span>
             </div>
           </div>
         </div>
@@ -29,19 +31,20 @@ const Layout = ({ children }) => {
       {/* Navigation */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+          <div className="flex space-x-4 sm:space-x-8 overflow-x-auto">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center px-3 py-4 text-sm font-medium border-b-2 transition-colors ${
+                className={`flex items-center px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   location.pathname === item.path
                     ? 'border-indigo-500 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 <span className="mr-2">{item.icon}</span>
-                {item.label}
+                <span className="hidden sm:inline">{item.label}</span>
+                <span className="sm:hidden">{item.shortLabel}</span>
               </Link>
             ))}
           </div>
@@ -49,7 +52,7 @@ const Layout = ({ children }) => {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>
