@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Global styles for the pastry business app */
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Image upload hover effects */
+.image-upload-hover:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+/* Smooth transitions for interactive elements */
+button, select, input {
+  transition: all 0.2s ease;
+}
+
+/* Print styles for order receipts */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-friendly {
+    background: white !important;
+    color: black !important;
+  }
+}
