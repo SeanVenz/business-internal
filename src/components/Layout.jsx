@@ -4,8 +4,8 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/admin/products', label: 'Product Management', icon: '🍪', shortLabel: 'Products' },
-    { path: '/admin/orders', label: 'Order Management', icon: '📋', shortLabel: 'Orders' }
+    { path: '/', label: 'Product Management', icon: '🍪', shortLabel: 'Products' },
+    { path: '/orders', label: 'Order Management', icon: '📋', shortLabel: 'Orders' }
   ];
 
   return (

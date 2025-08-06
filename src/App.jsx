@@ -10,9 +10,8 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         <Layout>
           <Routes>
-            <Route path="/" element={<Navigate to="/admin/products" replace />} />
-            <Route path="/admin/products" element={<ProductManagement />} />
-            <Route path="/admin/orders" element={<OrderManagement />} />
+            <Route path="/" element={<ProductManagement />} />
+            <Route path="/orders" element={<OrderManagement />} />
           </Routes>
         </Layout>
       </div>

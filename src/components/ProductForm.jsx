@@ -65,44 +65,6 @@ const ProductForm = ({ product, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Image Upload */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Product Image *
-        </label>
-        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-          <div className="flex-shrink-0 mx-auto sm:mx-0">
-            {imagePreview ? (
-              <img
-                src={imagePreview}
-                alt="Product preview"
-                className="h-24 w-24 sm:h-20 sm:w-20 object-cover rounded-md border border-gray-300"
-              />
-            ) : (
-              <div className="h-24 w-24 sm:h-20 sm:w-20 bg-gray-200 rounded-md flex items-center justify-center">
-                <span className="text-gray-400 text-xs">No image</span>
-              </div>
-            )}
-          </div>
-          {/* <div className="text-center sm:text-left">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              accept="image/*"
-              className="hidden"
-              required={!imagePreview}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full sm:w-auto bg-white border border-gray-300 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              {imagePreview ? 'Change Image' : 'Upload Image'}
-            </button>
-          </div> */}
-        </div>
-      </div>
 
       {/* Product Name */}
       <div>
