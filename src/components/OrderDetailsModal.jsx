@@ -93,14 +93,14 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
       />
       
       {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex min-h-full items-center justify-center p-2 sm:p-4">
         <div 
-          className={`relative w-full max-w-2xl bg-white rounded-lg shadow-xl transform transition-all ${
+          className={`relative w-full max-w-2xl bg-white rounded-lg shadow-xl transform transition-all mx-2 sm:mx-0 ${
             mounted ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
           }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Order Details</h2>
               <p className="text-sm text-gray-500 mt-1">Order ID: {order.id}</p>
@@ -116,7 +116,7 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
           </div>
 
           {/* Content */}
-          <div className="p-6 max-h-96 overflow-y-auto">
+          <div className="p-4 sm:p-6 max-h-[70vh] sm:max-h-96 overflow-y-auto">
             {/* Customer Information */}
             <div className="mb-6">
               <h3 className="text-lg font-medium text-gray-900 mb-3">Customer Information</h3>
@@ -219,20 +219,33 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
 
             {/* Timestamps */}
             <div className="mt-6 pt-4 border-t border-gray-200">
-              <div className="text-sm text-gray-500 space-y-1">
-                <p>Order created: {formatDate(order.createdAt)}</p>
+              <div className="text-xs sm:text-sm text-gray-500 space-y-1">
+                {order.createdAt && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between">
+                    <span className="font-medium">Order created:</span>
+                    <span className="sm:text-right">{formatDate(order.createdAt)}</span>
+                  </div>
+                )}
                 {order.updatedAt && order.updatedAt !== order.createdAt && (
-                  <p>Last updated: {formatDate(order.updatedAt)}</p>
+                  <div className="flex flex-col sm:flex-row sm:justify-between">
+                    <span className="font-medium">Last updated:</span>
+                    <span className="sm:text-right">{formatDate(order.updatedAt)}</span>
+                  </div>
+                )}
+                {!order.createdAt && !order.updatedAt && (
+                  <div className="text-center py-2 text-gray-400">
+                    <span className="text-xs">Timestamp information unavailable</span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
+          <div className="flex justify-end space-x-3 p-4 sm:p-6 border-t border-gray-200">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md font-medium transition-colors"
+              className="w-full sm:w-auto px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md font-medium transition-colors"
             >
               Close
             </button>
