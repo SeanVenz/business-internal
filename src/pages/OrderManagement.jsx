@@ -3,6 +3,7 @@ import { orderService, productService } from '../services/firebaseService';
 import OrderForm from '../components/OrderForm';
 import OrderList from '../components/OrderList';
 import LoadingSpinner from '../components/LoadingSpinner';
+import OrderDetailsModal from '../components/OrderDetailsModal';
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -12,6 +13,10 @@ const OrderManagement = () => {
   const [editingOrder, setEditingOrder] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [statusFilter, setStatusFilter] = useState('All');
+  const [deliveryDateFilter, setDeliveryDateFilter] = useState('');
+  const [showUpcomingDeliveries, setShowUpcomingDeliveries] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const orderStatuses = ['All', 'Pending', 'In Progress', 'Completed', 'Cancelled'];
 
@@ -123,10 +128,39 @@ const OrderManagement = () => {
     setShowForm(false);
   };
 
-  // Filter orders based on status - completed orders only show in "Completed" filter
-  const filteredOrders = statusFilter === 'All' 
-    ? orders.filter(order => order.status !== 'Completed')
-    : orders.filter(order => order.status === statusFilter);
+  // Filter orders based on status and delivery date
+  const getFilteredOrders = () => {
+    let filtered = statusFilter === 'All' 
+      ? orders.filter(order => order.status !== 'Completed')
+      : orders.filter(order => order.status === statusFilter);
+
+    // Apply delivery date filter if specified
+    if (deliveryDateFilter) {
+      filtered = filtered.filter(order => order.deliveryDate === deliveryDateFilter);
+    }
+
+    return filtered;
+  };
+
+  const filteredOrders = getFilteredOrders();
+
+  // Get upcoming deliveries (next 7 days, non-completed orders)
+  const getUpcomingDeliveries = () => {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+    
+    return orders.filter(order => {
+      if (!order.deliveryDate || order.status === 'Completed' || order.status === 'Cancelled') {
+        return false;
+      }
+      
+      const deliveryDate = new Date(order.deliveryDate);
+      return deliveryDate >= today && deliveryDate <= nextWeek;
+    }).sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate));
+  };
+
+  const upcomingDeliveries = getUpcomingDeliveries();
 
   // Calculate grand total for filtered orders
   const grandTotal = filteredOrders.reduce((total, order) => {
@@ -232,6 +266,119 @@ const OrderManagement = () => {
         </div>
       )}
 
+      {/* Upcoming Deliveries Section */}
+      {showUpcomingDeliveries && upcomingDeliveries.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              📅 Upcoming Deliveries (Next 7 Days)
+              <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                {upcomingDeliveries.length}
+              </span>
+            </h3>
+            <button
+              onClick={() => setShowUpcomingDeliveries(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {upcomingDeliveries.map(order => {
+              const deliveryDate = new Date(order.deliveryDate);
+              const today = new Date();
+              const isToday = deliveryDate.toDateString() === today.toDateString();
+              const isTomorrow = deliveryDate.toDateString() === new Date(today.getTime() + 86400000).toDateString();
+              
+              let dateLabel = deliveryDate.toLocaleDateString();
+              if (isToday) dateLabel = 'Today';
+              else if (isTomorrow) dateLabel = 'Tomorrow';
+
+              return (
+                <div
+                  key={order.id}
+                  className={`p-4 rounded-lg border-l-4 cursor-pointer hover:shadow-md transition-shadow ${
+                    isToday 
+                      ? 'border-red-500 bg-red-50 hover:bg-red-100' 
+                      : isTomorrow 
+                        ? 'border-orange-500 bg-orange-50 hover:bg-orange-100'
+                        : 'border-blue-500 bg-blue-50 hover:bg-blue-100'
+                  }`}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setShowModal(true);
+                  }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h4 className="font-medium text-gray-900">{order.customerName}</h4>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          order.status === 'Pending' 
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : order.status === 'In Progress'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {order.status}
+                        </span>
+                        {!order.isPaid && (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                            Unpaid
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div className="flex items-center space-x-4">
+                          <span className="font-medium">{dateLabel}</span>
+                          <span>📞 {order.contactNumber}</span>
+                          {order.paymentMode && (
+                            <span>💳 {order.paymentMode}</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Items: {(order.orderedItems || order.items)?.map(item => `${parseInt(item.quantity)}× ${products.find(p => p.id === item.productId)?.name || 'Unknown Product'}`).join(', ')}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className="font-semibold text-green-600">
+                        {formatPrice(order.totalAmount || 0)}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Click to view details
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Show message when no upcoming deliveries */}
+      {showUpcomingDeliveries && upcomingDeliveries.length === 0 && (
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">📅 Upcoming Deliveries</h3>
+            <button
+              onClick={() => setShowUpcomingDeliveries(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="text-center py-8 text-gray-500">
+            <div className="text-4xl mb-2">📅</div>
+            <p>No deliveries scheduled for the next 7 days</p>
+          </div>
+        </div>
+      )}
+
       {/* Orders List */}
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-4 sm:p-6 border-b border-gray-200">
@@ -249,7 +396,7 @@ const OrderManagement = () => {
               {/* Status Filter */}
               <div className="flex items-center space-x-2">
                 <label htmlFor="statusFilter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                  Filter:
+                  Status:
                 </label>
                 <select
                   id="statusFilter"
@@ -270,6 +417,43 @@ const OrderManagement = () => {
                   </button>
                 )}
               </div>
+
+              {/* Delivery Date Filter */}
+              <div className="flex items-center space-x-2">
+                <label htmlFor="deliveryDateFilter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                  Delivery:
+                </label>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="date"
+                    id="deliveryDateFilter"
+                    value={deliveryDateFilter}
+                    onChange={(e) => setDeliveryDateFilter(e.target.value)}
+                    className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                  {deliveryDateFilter && (
+                    <button
+                      onClick={() => setDeliveryDateFilter('')}
+                      className="text-xs text-gray-500 hover:text-gray-700 underline"
+                      title="Clear date filter"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Upcoming Deliveries Toggle */}
+              <button
+                onClick={() => setShowUpcomingDeliveries(!showUpcomingDeliveries)}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                  showUpcomingDeliveries
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                📅 Upcoming ({upcomingDeliveries.length})
+              </button>
               
               {/* Grand Total */}
               <div className="bg-indigo-50 px-4 py-2 rounded-md border border-indigo-200">
@@ -294,6 +478,17 @@ const OrderManagement = () => {
           onPaymentToggle={handlePaymentToggle}
         />
       </div>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        order={selectedOrder}
+        products={products}
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedOrder(null);
+        }}
+      />
     </div>
   );
 };

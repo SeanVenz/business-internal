@@ -130,7 +130,7 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate, onPayme
                   <div className="text-sm text-gray-900">
                     {order.orderedItems?.map((item, index) => (
                       <div key={index} className="mb-1">
-                        <span className="font-medium">{item.quantity}x</span>{' '}
+                        <span className="font-medium">{parseInt(item.quantity)}x</span>{' '}
                         {item.productName || getProductName(item.productId)}
                         <span className="text-gray-500 text-xs ml-1">
                           ({formatPrice(item.price)} each)
@@ -221,10 +221,10 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate, onPayme
                   {order.orderedItems?.map((item, index) => (
                     <div key={index} className="flex justify-between items-center bg-gray-50 px-2 py-1 rounded">
                       <span>
-                        {item.quantity}x {item.productName || getProductName(item.productId)}
+                        {parseInt(item.quantity)}x {item.productName || getProductName(item.productId)}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {formatPrice(item.price * item.quantity)}
+                        {formatPrice(item.price * parseInt(item.quantity))}
                       </span>
                     </div>
                   ))}
