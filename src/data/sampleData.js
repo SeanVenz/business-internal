@@ -46,6 +46,9 @@ export const sampleOrders = [
     customerName: "Maria Santos",
     phoneNumber: "09123456789",
     deliveryAddress: "123 Main Street, Quezon City",
+    deliveryDate: "2025-08-20",
+    paymentMode: "COD",
+    isPaid: false,
     status: "In Progress",
     orderedItems: [
       {
@@ -68,6 +71,9 @@ export const sampleOrders = [
     customerName: "Juan Dela Cruz",
     phoneNumber: "09987654321",
     deliveryAddress: "456 Oak Avenue, Makati City",
+    deliveryDate: "2025-08-22",
+    paymentMode: "GCash",
+    isPaid: true,
     status: "Pending",
     orderedItems: [
       {
@@ -103,6 +109,9 @@ ORDERS COLLECTION (/orders):
   customerName: "string",
   phoneNumber: "string",
   deliveryAddress: "string",
+  deliveryDate: "string", // YYYY-MM-DD format
+  paymentMode: "string", // COD, Bank Transfer, GCash
+  isPaid: "boolean", // Payment status
   status: "string", // Pending, In Progress, Completed, Cancelled
   orderedItems: [
     {

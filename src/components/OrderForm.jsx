@@ -5,6 +5,9 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
     customerName: order?.customerName || '',
     phoneNumber: order?.phoneNumber || '',
     deliveryAddress: order?.deliveryAddress || '',
+    deliveryDate: order?.deliveryDate || '',
+    paymentMode: order?.paymentMode || 'COD',
+    isPaid: order?.isPaid || false,
     status: order?.status || 'Pending',
     notes: order?.notes || ''
   });
@@ -12,12 +15,13 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
   const [loading, setLoading] = useState(false);
 
   const orderStatuses = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+  const paymentModes = ['COD', 'Bank Transfer', 'GCash'];
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -68,8 +72,8 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.customerName || !formData.phoneNumber || !formData.deliveryAddress) {
-      alert('Please fill in all required customer information');
+    if (!formData.customerName || !formData.phoneNumber || !formData.deliveryAddress || !formData.deliveryDate) {
+      alert('Please fill in all required fields');
       return;
     }
 
@@ -151,6 +155,58 @@ const OrderForm = ({ order, products, onSubmit, onCancel }) => {
           placeholder="Enter delivery address"
           required
         />
+      </div>
+
+      {/* Delivery Date and Payment Mode */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div>
+          <label htmlFor="deliveryDate" className="block text-sm font-medium text-gray-700 mb-2">
+            Delivery Date *
+          </label>
+          <input
+            type="date"
+            id="deliveryDate"
+            name="deliveryDate"
+            value={formData.deliveryDate}
+            onChange={handleInputChange}
+            min={new Date().toISOString().split('T')[0]}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700 mb-2">
+            Mode of Payment *
+          </label>
+          <select
+            id="paymentMode"
+            name="paymentMode"
+            value={formData.paymentMode}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          >
+            {paymentModes.map(mode => (
+              <option key={mode} value={mode}>{mode}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Payment Status */}
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="isPaid"
+          name="isPaid"
+          checked={formData.isPaid}
+          onChange={handleInputChange}
+          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+        />
+        <label htmlFor="isPaid" className="ml-2 block text-sm text-gray-900">
+          Payment Received ✅
+        </label>
       </div>
 
       {/* Order Status */}

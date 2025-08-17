@@ -1,4 +1,4 @@
-const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
+const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate, onPaymentToggle }) => {
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
@@ -72,6 +72,9 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
                 Customer
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Delivery Info
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Items
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -79,9 +82,6 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -99,8 +99,30 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
                     <div className="text-sm text-gray-500">
                       📞 {order.phoneNumber}
                     </div>
-                    <div className="text-sm text-gray-500 max-w-xs truncate">
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-900">
+                    <div className="text-sm text-gray-500 max-w-xs truncate mb-1">
                       📍 {order.deliveryAddress}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      📅 {order.deliveryDate || 'Not set'}
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span>💳 {order.paymentMode || 'COD'}</span>
+                        <button
+                          onClick={() => onPaymentToggle && onPaymentToggle(order.id, !order.isPaid)}
+                          className={`px-1 py-0.5 text-xs rounded font-medium ${
+                            order.isPaid 
+                              ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                              : 'bg-red-100 text-red-700 hover:bg-red-200'
+                          }`}
+                        >
+                          {order.isPaid ? '✅' : '❌'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -131,9 +153,6 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatDate(order.createdAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end space-x-2">
@@ -180,6 +199,22 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate }) => {
 
             <div className="mb-3">
               <p className="text-sm text-gray-500 mb-2">📍 {order.deliveryAddress}</p>
+              <div className="flex flex-col sm:flex-row sm:justify-between text-sm text-gray-500 mb-2">
+                <span>📅 Delivery: {order.deliveryDate || 'Not set'}</span>
+                <div className="flex items-center space-x-2">
+                  <span>💳 Payment: {order.paymentMode || 'COD'}</span>
+                  <button
+                    onClick={() => onPaymentToggle && onPaymentToggle(order.id, !order.isPaid)}
+                    className={`px-2 py-1 text-xs rounded font-medium ${
+                      order.isPaid 
+                        ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                        : 'bg-red-100 text-red-700 hover:bg-red-200'
+                    }`}
+                  >
+                    {order.isPaid ? '✅ Paid' : '❌ Unpaid'}
+                  </button>
+                </div>
+              </div>
               <div className="text-sm text-gray-900">
                 <p className="font-medium mb-1">Items:</p>
                 <div className="space-y-1">

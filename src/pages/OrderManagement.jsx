@@ -95,6 +95,24 @@ const OrderManagement = () => {
     }
   };
 
+  const handlePaymentToggle = async (orderId, isPaid) => {
+    try {
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        const updatedOrder = await orderService.updateOrder(orderId, {
+          ...order,
+          isPaid: isPaid
+        });
+        setOrders(prev => 
+          prev.map(o => o.id === orderId ? updatedOrder : o)
+        );
+      }
+    } catch (err) {
+      setError('Failed to update payment status');
+      console.error(err);
+    }
+  };
+
   const handleEdit = (order) => {
     setEditingOrder(order);
     setShowForm(true);
@@ -105,9 +123,9 @@ const OrderManagement = () => {
     setShowForm(false);
   };
 
-  // Filter orders based on status
+  // Filter orders based on status - completed orders only show in "Completed" filter
   const filteredOrders = statusFilter === 'All' 
-    ? orders 
+    ? orders.filter(order => order.status !== 'Completed')
     : orders.filter(order => order.status === statusFilter);
 
   // Calculate grand total for filtered orders
@@ -273,6 +291,7 @@ const OrderManagement = () => {
           onEdit={handleEdit}
           onDelete={handleDeleteOrder}
           onStatusUpdate={handleStatusUpdate}
+          onPaymentToggle={handlePaymentToggle}
         />
       </div>
     </div>
