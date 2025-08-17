@@ -4,6 +4,7 @@ import OrderForm from '../components/OrderForm';
 import OrderList from '../components/OrderList';
 import LoadingSpinner from '../components/LoadingSpinner';
 import OrderDetailsModal from '../components/OrderDetailsModal';
+import EditOrderModal from '../components/EditOrderModal';
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -11,12 +12,12 @@ const OrderManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editingOrder, setEditingOrder] = useState(null);
-  const [showForm, setShowForm] = useState(false);
   const [statusFilter, setStatusFilter] = useState('All');
   const [deliveryDateFilter, setDeliveryDateFilter] = useState('');
   const [showUpcomingDeliveries, setShowUpcomingDeliveries] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const orderStatuses = ['All', 'Pending', 'In Progress', 'Completed', 'Cancelled'];
 
@@ -45,7 +46,6 @@ const OrderManagement = () => {
     try {
       const newOrder = await orderService.addOrder(orderData);
       setOrders(prev => [newOrder, ...prev]);
-      setShowForm(false);
       setError('');
     } catch (err) {
       setError('Failed to add order');
@@ -120,12 +120,7 @@ const OrderManagement = () => {
 
   const handleEdit = (order) => {
     setEditingOrder(order);
-    setShowForm(true);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingOrder(null);
-    setShowForm(false);
+    setShowEditModal(true);
   };
 
   // Filter orders based on status and delivery date
@@ -203,9 +198,11 @@ const OrderManagement = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Order Management</h1>
         <button
-          onClick={() => setShowForm(true)}
-          disabled={showForm}
-          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+          onClick={() => {
+            setEditingOrder(null);
+            setShowEditModal(true);
+          }}
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
         >
           <span className="sm:hidden">Add Order</span>
           <span className="hidden sm:inline">Add New Order</span>
@@ -216,21 +213,6 @@ const OrderManagement = () => {
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
           {error}
-        </div>
-      )}
-
-      {/* Order Form */}
-      {showForm && (
-        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">
-            {editingOrder ? 'Edit Order' : 'Add New Order'}
-          </h2>
-          <OrderForm
-            order={editingOrder}
-            products={products}
-            onSubmit={editingOrder ? handleUpdateOrder : handleAddOrder}
-            onCancel={handleCancelEdit}
-          />
         </div>
       )}
 
@@ -478,6 +460,18 @@ const OrderManagement = () => {
           onPaymentToggle={handlePaymentToggle}
         />
       </div>
+
+      {/* Edit Order Modal */}
+      <EditOrderModal
+        order={editingOrder}
+        products={products}
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingOrder(null);
+        }}
+        onSubmit={editingOrder ? handleUpdateOrder : handleAddOrder}
+      />
 
       {/* Order Details Modal */}
       <OrderDetailsModal
