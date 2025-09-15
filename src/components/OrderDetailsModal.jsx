@@ -8,9 +8,11 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
       setMounted(true);
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
+      console.log(order)
     } else {
       // Re-enable body scroll when modal is closed
       document.body.style.overflow = 'unset';
+      console.log(order)
     }
 
     // Cleanup function to ensure body scroll is restored
@@ -127,7 +129,7 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-700">Contact:</span>
-                  <span className="text-gray-900">{order.contactNumber}</span>
+                  <span className="text-gray-900">{order.phoneNumber}</span>
                 </div>
                 {order.address && (
                   <div className="flex justify-between">
