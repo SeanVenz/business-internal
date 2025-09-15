@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
-                <span className="hidden sm:inline">🧁 Pastry Business Manager</span>
+                <span className="hidden sm:inline">🧁 Bubukeki Business Manager</span>
                 <span className="sm:hidden">🧁 Pastry Mgr</span>
               </h1>
             </div>
