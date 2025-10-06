@@ -46,7 +46,15 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate, onPayme
     return product ? product.name : 'Unknown Product';
   };
 
-  if (orders.length === 0) {
+  // Sort orders by deliveryDate ascending (oldest first)
+  const sortedOrders = [...orders].sort((a, b) => {
+    // If either deliveryDate is missing, treat as far future
+    const aDate = a.deliveryDate ? new Date(a.deliveryDate) : new Date(8640000000000000);
+    const bDate = b.deliveryDate ? new Date(b.deliveryDate) : new Date(8640000000000000);
+    return aDate - bDate;
+  });
+
+  if (sortedOrders.length === 0) {
     return (
       <div className="p-8 text-center text-gray-500">
         <div className="text-4xl mb-4">📋</div>
@@ -89,7 +97,7 @@ const OrderList = ({ orders, products, onEdit, onDelete, onStatusUpdate, onPayme
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {orders.map((order) => (
+            {sortedOrders.map((order) => (
               <tr key={order.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div>

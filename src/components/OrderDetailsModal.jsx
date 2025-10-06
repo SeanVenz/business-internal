@@ -1,4 +1,29 @@
+
 import { useState, useEffect } from 'react';
+
+function CopyInfoButton({ order }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    const name = order.customerName || '';
+    const contact = order.phoneNumber || '';
+    const address = order.deliveryAddress || '';
+    let text = `Name: ${name}\nContact: ${contact}`;
+    if (address) text += `\nAddress: ${address}`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button
+      className={`ml-2 px-3 py-1 text-xs rounded font-medium transition-colors ${copied ? 'bg-green-100 text-green-700' : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700'}`}
+      title="Copy name, contact, and address"
+      onClick={handleCopy}
+    >
+      {copied ? '✓ Copied!' : 'Copy Info'}
+    </button>
+  );
+}
+
 
 const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
   const [mounted, setMounted] = useState(false);
@@ -121,20 +146,23 @@ const OrderDetailsModal = ({ order, products, isOpen, onClose }) => {
           <div className="p-4 sm:p-6 max-h-[70vh] sm:max-h-96 overflow-y-auto">
             {/* Customer Information */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Customer Information</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-medium text-gray-900">Customer Information</h3>
+                <CopyInfoButton order={order} />
+              </div>
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="text-gray-900">{order.customerName}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">Contact:</span>
                   <span className="text-gray-900">{order.phoneNumber}</span>
                 </div>
-                {order.address && (
-                  <div className="flex justify-between">
+                {order.deliveryAddress && (
+                  <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-700">Address:</span>
-                    <span className="text-gray-900 text-right">{order.address}</span>
+                    <span className="text-gray-900 text-right">{order.deliveryAddress}</span>
                   </div>
                 )}
               </div>
